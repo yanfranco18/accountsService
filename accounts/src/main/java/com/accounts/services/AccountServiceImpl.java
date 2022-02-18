@@ -2,16 +2,17 @@ package com.accounts.services;
 
 import com.accounts.models.Account;
 import com.accounts.repository.AccountDao;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@RequiredArgsConstructor
 public class AccountServiceImpl implements  IAccountService{
 
-    @Autowired
-    private AccountDao accountDao;
+    private final AccountDao accountDao;
 
 
 

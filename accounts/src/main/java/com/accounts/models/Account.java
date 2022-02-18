@@ -16,9 +16,9 @@ public class Account {
 
     @Id
     private String id;
-    private String commission;
-    private String lineaBalance;
-    private String amount;
+    private Double lineAvailable;
+    private Double lineUsed;
+    private String balancePast;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date createDate;
 
