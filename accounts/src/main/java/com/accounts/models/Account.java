@@ -16,12 +16,13 @@ public class Account {
 
     @Id
     private String id;
+    private String number;
     private Double lineAvailable;
     private Double lineUsed;
-    private String balancePast;
+    private Double balancePast;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date createDate;
 
-    private Client idClient;
-    private Products nameProducts;
+    private String idClient;
+    private String idProducts;
 }

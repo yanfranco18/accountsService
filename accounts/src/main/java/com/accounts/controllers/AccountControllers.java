@@ -8,12 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,6 +42,53 @@ public class AccountControllers {
                         .contentType(MediaType.APPLICATION_JSON)
                         //mostrando en el body la respuesta
                         .body(accountService.findAll()));
+    }
+
+    //metodo crear
+    @CircuitBreaker(name="accounts", fallbackMethod = "fallback")
+    @TimeLimiter(name="accounts")
+    @PostMapping
+    public Mono<ResponseEntity<Account>> create(@RequestBody Account account){
+        //validamos la fecha en caso venga fecha, asigamos la fecha
+        if(account.getCreateDate()==null){
+            account.setCreateDate(new Date());
+        }
+        //ahora guardamos la cuenta, mediante map, cambiamos el flujo de tipo mono a un responseEntity
+        return accountService.save(account)
+                //mostramos el estado en el http, indicamos la uri de la cuenta se crea
+                .map(p -> ResponseEntity.created(URI.create("/accounts/".concat(p.getId())))
+                        //Modificamos la respuesta en el body con el contentType
+                        .contentType(MediaType.APPLICATION_JSON)
+                        //Y pasamos la cuenta creada
+                        .body(p));
+    }
+
+    //metodo buscar por id
+    @CircuitBreaker(name="accounts", fallbackMethod = "fallback")
+    @TimeLimiter(name="accounts")
+    @GetMapping("/getById/{id}")
+    public Mono<ResponseEntity<Account>> getById(@PathVariable String id){
+        return accountService.findById(id)
+                .map(p -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(p))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    //metodo buscar por number
+    @CircuitBreaker(name="accounts", fallbackMethod = "fallback")
+    @TimeLimiter(name="accounts")
+    @GetMapping("/{number}")
+    public Mono<ResponseEntity<Account>> search(@PathVariable String number){
+        //buscamos el tipo de number
+        return accountService.findByNumber(number)
+                //mostramos la respuesta
+                .map(p -> ResponseEntity.ok()
+                        //Modificamos la respuesta en el body con el contentType
+                        .contentType(MediaType.APPLICATION_JSON)
+                        //devolvemos el objeto obtenido
+                        .body(p))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     //metodo para manejar el error

@@ -3,7 +3,6 @@ package com.accounts.services;
 import com.accounts.models.Account;
 import com.accounts.repository.AccountDao;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,8 +12,6 @@ import reactor.core.publisher.Mono;
 public class AccountServiceImpl implements  IAccountService{
 
     private final AccountDao accountDao;
-
-
 
     @Override
     public Flux<Account> findAll() {
@@ -34,5 +31,10 @@ public class AccountServiceImpl implements  IAccountService{
     @Override
     public Mono<Account> findById(String id) {
         return accountDao.findById(id);
+    }
+
+    @Override
+    public Mono<Account> findByNumber(String number) {
+        return accountDao.findByNumber(number);
     }
 }

@@ -15,5 +15,7 @@ public interface IAccountService {
 
     public Mono<Account> findById(String id);
 
+    public Mono<Account> findByNumber(String number);
+
 
 }
