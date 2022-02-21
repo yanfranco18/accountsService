@@ -20,6 +20,7 @@ public class Account {
     private Double lineAvailable;
     private Double lineUsed;
     private Double balancePast;
+    private Double amount;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date createDate;
 

@@ -37,4 +37,27 @@ public class AccountServiceImpl implements  IAccountService{
     public Mono<Account> findByNumber(String number) {
         return accountDao.findByNumber(number);
     }
+
+    @Override
+    public Mono<Account> findByIdDepositAccount(String id, Double amount) {
+        return accountDao.findById(id)
+                .flatMap(a -> {
+                    var getLineUsed = a.getLineUsed();
+                    var updLineUsed = getLineUsed + amount;
+                    a.setLineUsed(updLineUsed);
+                    return accountDao.save(a);
+                });
+    }
+
+    @Override
+    public Mono<Account> findByIdWithdrawalAccount(String id, Double amount) {
+        return accountDao.findById(id)
+                .flatMap(a -> {
+                    var getLineUsed = a.getLineUsed();
+                    var updLineUsed = getLineUsed - amount;
+                    if(updLineUsed < 0) return Mono.error(new Exception("Insufficient balance"));
+                    a.setLineUsed(updLineUsed);
+                    return accountDao.save(a);
+                });
+    }
 }
