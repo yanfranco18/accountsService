@@ -98,4 +98,32 @@ class AccountsApplicationTests {
 				.expectNextMatches(c -> c.getNumber().equals("19123412345678"))
 				.expectComplete();
 	}
+
+	@Test
+	public void saveDepositAccount() throws Exception{
+
+		Account ac = DataAccount.saveDepWit();
+
+		when(service.saveDepositAccount(ac)).thenReturn(Mono.just(ac));
+
+		webTestClient.post().uri("/accounts/saveDeposit")
+				.accept(MediaType.APPLICATION_JSON)
+				.body(Mono.just(ac), Account.class)
+				.exchange()
+				.expectStatus().isCreated();
+	}
+
+	@Test
+	public void saveWithdrawalAccount() throws Exception{
+
+		Account ac = DataAccount.saveDepWit();
+
+		when(service.saveWithdrawalAccount(ac)).thenReturn(Mono.just(ac));
+
+		webTestClient.post().uri("/accounts/saveWithdrawal")
+				.accept(MediaType.APPLICATION_JSON)
+				.body(Mono.just(ac), Account.class)
+				.exchange()
+				.expectStatus().isCreated();
+	}
 }

@@ -91,6 +91,27 @@ public class AccountControllers {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
+    //method deposit
+    @CircuitBreaker(name="accounts", fallbackMethod = "fallback")
+    @TimeLimiter(name="accounts")
+    @PostMapping("/saveDeposit")
+    public Mono<ResponseEntity<Account>> saveDepositAccount(@RequestBody Account account){
+        return accountService.saveDepositAccount(account)
+                .map(p -> ResponseEntity.created(URI.create("/accounts/saveDeposit/".concat(p.getId())))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(p));
+    }
+
+    //method deposit
+    @CircuitBreaker(name="accounts", fallbackMethod = "fallback")
+    @TimeLimiter(name="accounts")
+    @PostMapping("/saveWithdrawal")
+    public Mono<ResponseEntity<Account>> saveWithdrawalAccount(@RequestBody Account account){
+        return accountService.saveWithdrawalAccount(account)
+                .map(p -> ResponseEntity.created(URI.create("/accounts/saveWithdrawal/".concat(p.getId())))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(p)).defaultIfEmpty(ResponseEntity.notFound().build());
+    }
 
 
     //metodo para manejar el error

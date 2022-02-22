@@ -18,9 +18,9 @@ public interface IAccountService {
     public Mono<Account> findByNumber(String number);
 
     //metodo para deposite
-    public Mono<Account> findByIdDepositAccount(String id, Double amount);
+    public Mono<Account> saveDepositAccount(Account account);
     //metodo para retiro
-    public Mono<Account> findByIdWithdrawalAccount(String id, Double amount);
+    public Mono<Account> saveWithdrawalAccount(Account account);
 
 
 

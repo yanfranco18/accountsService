@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements  IAccountService{
@@ -39,24 +41,26 @@ public class AccountServiceImpl implements  IAccountService{
     }
 
     @Override
-    public Mono<Account> findByIdDepositAccount(String id, Double amount) {
-        return accountDao.findById(id)
+    public Mono<Account> saveDepositAccount(Account account){
+        return accountDao.findById(account.getId())
                 .flatMap(a -> {
-                    var getLineUsed = a.getLineUsed();
-                    var updLineUsed = getLineUsed + amount;
-                    a.setLineUsed(updLineUsed);
+                    var oldlineUsed = a.getLineUsed();
+                    a.setLineUsed(oldlineUsed + account.getAmount());
+                    a.setAmount(account.getAmount());
+                    a.setCreateDate(new Date());
                     return accountDao.save(a);
                 });
     }
 
     @Override
-    public Mono<Account> findByIdWithdrawalAccount(String id, Double amount) {
-        return accountDao.findById(id)
+    public Mono<Account> saveWithdrawalAccount(Account account) {
+        return accountDao.findById(account.getId())
                 .flatMap(a -> {
-                    var getLineUsed = a.getLineUsed();
-                    var updLineUsed = getLineUsed - amount;
-                    if(updLineUsed < 0) return Mono.error(new Exception("Insufficient balance"));
-                    a.setLineUsed(updLineUsed);
+                    var oldlineUsed = a.getLineUsed();
+                    a.setLineUsed(oldlineUsed - account.getAmount());
+                    a.setAmount(account.getAmount());
+                    a.setCreateDate(new Date());
+                    if(a.getLineUsed() < 0) return Mono.error(new Exception("Insufficient balance"));
                     return accountDao.save(a);
                 });
     }

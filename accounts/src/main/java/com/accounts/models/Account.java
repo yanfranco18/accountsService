@@ -23,7 +23,7 @@ public class Account {
     private Double amount;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date createDate;
-
+    //private Integer countMovements;
     private String idClient;
     private String idProducts;
 }
