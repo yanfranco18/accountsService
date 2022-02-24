@@ -26,8 +26,8 @@ public class AccountServiceImpl implements  IAccountService{
     }
 
     @Override
-    public Mono<Void> delete(Account account) {
-        return accountDao.delete(account);
+    public Mono<Void> delete(String id) {
+        return accountDao.deleteById(id);
     }
 
     @Override
@@ -47,6 +47,8 @@ public class AccountServiceImpl implements  IAccountService{
                     var oldlineUsed = a.getLineUsed();
                     a.setLineUsed(oldlineUsed + account.getAmount());
                     a.setAmount(account.getAmount());
+                    var countMov = a.getCountMovements()+0;
+                    a.setCountMovements(countMov+1);
                     a.setCreateDate(new Date());
                     return accountDao.save(a);
                 });
@@ -59,6 +61,8 @@ public class AccountServiceImpl implements  IAccountService{
                     var oldlineUsed = a.getLineUsed();
                     a.setLineUsed(oldlineUsed - account.getAmount());
                     a.setAmount(account.getAmount());
+                    var countMov = a.getCountMovements()+0;
+                    a.setCountMovements(countMov+1);
                     a.setCreateDate(new Date());
                     if(a.getLineUsed() < 0) return Mono.error(new Exception("Insufficient balance"));
                     return accountDao.save(a);

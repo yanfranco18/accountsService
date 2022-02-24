@@ -6,6 +6,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +79,7 @@ public class AccountControllers {
     //metodo buscar por number
     @CircuitBreaker(name="accounts", fallbackMethod = "fallback")
     @TimeLimiter(name="accounts")
-    @GetMapping("/{number}")
+    @GetMapping("/search/{number}")
     public Mono<ResponseEntity<Account>> search(@PathVariable String number){
         //buscamos el tipo de number
         return accountService.findByNumber(number)
@@ -113,6 +114,15 @@ public class AccountControllers {
                         .body(p)).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
+    @CircuitBreaker(name="accounts", fallbackMethod = "fallback")
+    @TimeLimiter(name="accounts")
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> deleteAccount (@PathVariable String id){
+
+        return accountService.delete(id)
+                .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
+                .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
+    }
 
     //metodo para manejar el error
     private String fallback(HttpServerErrorException ex) {

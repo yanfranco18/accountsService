@@ -11,7 +11,7 @@ public interface IAccountService {
 
     public Mono<Account> save(Account account);
 
-    public Mono<Void> delete(Account account);
+    public Mono<Void> delete(String id);
 
     public Mono<Account> findById(String id);
 
