@@ -1,5 +1,6 @@
 package com.accounts.services;
 
+import com.accounts.clientWebClient.IClientWebClientService;
 import com.accounts.models.Account;
 import com.accounts.repository.AccountDao;
 import lombok.RequiredArgsConstructor;
@@ -9,11 +10,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.Date;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class AccountServiceImpl implements  IAccountService{
 
     private final AccountDao accountDao;
+    private final IClientWebClientService clientService;
 
     @Override
     public Flux<Account> findAll() {
@@ -22,7 +24,20 @@ public class AccountServiceImpl implements  IAccountService{
 
     @Override
     public Mono<Account> save(Account account) {
-        return accountDao.save(account);
+        return clientService.findById(account.getIdClient())
+                        .flatMap(c -> {
+                            Account acc = new Account();
+                            acc.setNumber(account.getNumber());
+                            acc.setLineAvailable(account.getLineAvailable());
+                            acc.setLineUsed(account.getLineUsed());
+                            acc.setBalancePast(account.getBalancePast());
+                            acc.setAmount(account.getAmount());
+                            acc.setCreateDate(new Date());
+                            acc.setCountMovements(account.getCountMovements());
+                            acc.setIdClient(c.getId());
+                            acc.setIdProducts(account.getIdProducts());
+                            return accountDao.save(acc);
+                        });
     }
 
     @Override

@@ -10,6 +10,11 @@ spring:
     mongodb:
       uri: mongodb+srv://admin1:admin1@dbproyect.sklmn.mongodb.net/DbProyect3?retryWrites=true&w=majority
 
+application:
+  external:
+    comments:
+      url: http://localhost:8094
+      path: /clients
 
 #defecto (nombre de la configuracion del circuibraker)
 #sliding-window-size (tamaño de la ventana deslizante)

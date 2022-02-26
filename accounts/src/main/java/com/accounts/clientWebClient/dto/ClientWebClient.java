@@ -1,22 +1,24 @@
-package com.accounts.models;
+package com.accounts.clientWebClient.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class Products {
+@Builder
+public class ClientWebClient {
 
     private String id;
-    private String nameProduct;
-    private String numberCard;
-    private String typeProduct;
-    private String accountNumber;
+    private String nameClient;
+    private String typeClient;
+    private String identityDocument;
+    private String phoneNumber;
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private Date createDate;
 }

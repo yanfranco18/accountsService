@@ -1,7 +1,7 @@
 package com.accounts.controllers;
 
 import com.accounts.models.Account;
-import com.accounts.services.IAccountService;
+import com.accounts.services.AccountServiceImpl;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ import java.util.Date;
 @RequestMapping("/accounts")
 public class AccountControllers {
 
-    private final IAccountService accountService;
+    private final AccountServiceImpl accountService;
 
     //@CircuitBreaker, name(va el nombre de la instancia usado en la configuracion yml, "items")
     //fallbackMethod, permite manejar el error, mediante un metodo definido
@@ -50,10 +49,6 @@ public class AccountControllers {
     @TimeLimiter(name="accounts")
     @PostMapping
     public Mono<ResponseEntity<Account>> create(@RequestBody Account account){
-        //validamos la fecha en caso venga fecha, asigamos la fecha
-        if(account.getCreateDate()==null){
-            account.setCreateDate(new Date());
-        }
         //ahora guardamos la cuenta, mediante map, cambiamos el flujo de tipo mono a un responseEntity
         return accountService.save(account)
                 //mostramos el estado en el http, indicamos la uri de la cuenta se crea
@@ -61,7 +56,7 @@ public class AccountControllers {
                         //Modificamos la respuesta en el body con el contentType
                         .contentType(MediaType.APPLICATION_JSON)
                         //Y pasamos la cuenta creada
-                        .body(p));
+                        .body(p)).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     //metodo buscar por id
